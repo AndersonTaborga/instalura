@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import queryString from 'query-string';
+import {browserHistory} from 'react-router';
 
 export default class Login extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {msg: queryString.parse(this.props.location.search).msg};
+        this.state = {msg: this.props.location.query.msg};
     }
 
     /* Sempre que fizermos um Ajax, precisamos interromper o fluxo natural do carregamento da DOM */
@@ -32,7 +32,7 @@ export default class Login extends Component {
             })
             .then(token => {
                 localStorage.setItem('auth-token', token);
-                this.props.history.push('/timeline');
+                browserHistory.push('/timeline');
             })
             .catch(error => {
                 this.setState({msg: error.message});
