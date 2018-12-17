@@ -1,11 +1,11 @@
-import Pubsub from "pubsub-js";
+import { Listagem, Comentario, Like, Notifica } from "../actions/actionCreator";
 export default class TimelineAPI {
   static lista(urlPerfil) {
     return dispatch => {
       fetch(urlPerfil)
         .then(response => response.json())
         .then(fotos => {
-          dispatch({ type: "LISTAGEM", fotos });
+          dispatch(Listagem(fotos));
           return fotos;
         });
     };
@@ -35,7 +35,7 @@ export default class TimelineAPI {
           }
         })
         .then(novoComentario => {
-          dispatch({ type: "COMENTARIO", fotoId, novoComentario });
+          dispatch(Comentario(fotoId, novoComentario));
           return novoComentario;
         });
     };
@@ -57,8 +57,22 @@ export default class TimelineAPI {
           }
         })
         .then(liker => {
-          dispatch({ type: "LIKE", fotoId, liker });
+          dispatch(Like(fotoId, liker));
           return liker;
+        });
+    };
+  }
+
+  static pesquisa(login) {
+    return dispatch => {
+      fetch(`https://instalura-api.herokuapp.com/api/public/fotos/${login}`)
+        .then(response => response.json())
+        .then(fotos => {
+          if (fotos.length === 0) {
+            dispatch(Notifica("Usuário não encontrado!!!"));
+          }
+          dispatch(Listagem(fotos));
+          return fotos;
         });
     };
   }
